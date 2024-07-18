@@ -31,6 +31,7 @@ model Student {
   image         String?
   contactNumber String?
   user          User    @relation(references: [email], fields: [email])
+  cart          Cart[]
 
   @@map("students")
 }
@@ -58,7 +59,38 @@ model Admin {
   user          User    @relation(references: [email], fields: [email])
 }
 
+model Classes {
+  id               String        @id @default(uuid())
+  name             String
+  image            String?
+  description      String?
+  price            Float
+  availableSeats   Int
+  enrolledStudents Int
+  type             COURSE_TYPE   @default(FREE)
+  status           COURSE_STATUS @default(PENDING)
+  isDeleted        Boolean       @default(false)
+  instructorId     String
+  instructor       Instructor    @relation(fields: [instructorId], references: [id])
+  cart             Cart[]
 
+  @@map("classes")
+}
+
+model Cart {
+  id        String @id @default(uuid())
+  studentId String
+  classId   String
+
+  isPaid    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id])
+  class   Classes @relation(fields: [classId], references: [id])
+
+  @@map("cart")
+}
 
 // enums 
 enum USER_ROLE {
@@ -78,9 +110,9 @@ enum COURSE_TYPE {
 }
 
 enum COURSE_STATUS {
-  PUBLISHED
-  DRAFT
-  DELETED
+  PENDING
+  APPROVED
+  DENIED
 }
 
 enum GENDER {
