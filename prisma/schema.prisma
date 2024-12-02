@@ -92,6 +92,7 @@ model Cart {
   @@map("cart")
 }
 
+
 // enums 
 enum USER_ROLE {
   USER
